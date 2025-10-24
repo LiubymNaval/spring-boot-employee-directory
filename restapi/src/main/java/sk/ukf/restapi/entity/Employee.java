@@ -1,5 +1,6 @@
 package sk.ukf.restapi.entity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
@@ -10,27 +11,49 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank(message = "Meno nesmie byť prázdne")
+    @Size(max = 50, message = "Meno nesmie byť dlhšie ako 50 znakov")
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
+    @NotBlank(message = "Priezvisko nesmie byť prázdne")
+    @Size(max = 50, message = "Priezvisko nesmie byť dlhšie ako 50 znakov")
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
+    @NotNull(message = "Dátum narodenia je povinný")
+    @Past(message = "Dátum narodenia musí byť v minulosti")
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
-    @Column(name = "email",nullable = false)
+    @NotBlank(message = "Email nesmie byť prázdny")
+    @Size(max = 254, message = "Email nesmie byť dlhší ako 254 znakov")
+    @Pattern(
+            regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+            message = "Neplatný formát emailovej adresy"
+    )
+    @Column(name = "email",nullable = false, unique = true)
     private String email;
 
+    @NotBlank(message = "Telefón nesmie byť prázdny")
+    @Pattern(
+            regexp= "^\\+421\\d{9}$",
+            message = "Neplatné telefónne číslo"
+    )
     @Column(name = "phone",nullable = false)
     private String phone;
 
+
+    @NotBlank(message = "Pracovná pozícia nesmie byť prázdna")
     @Column(name = "job_title", nullable = false)
     private String jobTitle;
 
+    @NotNull(message = "Plat nesmie byť null")
+    @DecimalMin(value = "0.0", inclusive = true, message = "Plat nemôže byť záporný")
     @Column(name = "salary", nullable = false)
     private Double salary;
 
+    @NotNull(message = "Typ zamestnania (full_time) je povinný")
     @Column(name = "full_time", nullable = false)
     private Boolean fullTime;
 

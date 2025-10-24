@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sk.ukf.restapi.dao.EmployeeRepository;
 import sk.ukf.restapi.entity.Employee;
+import sk.ukf.restapi.exception.EmailAlreadyExistsException;
+import sk.ukf.restapi.exception.ObjectNotFoundException;
 
 import java.util.List;
 
@@ -27,16 +29,35 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee findById(int id) {
         return employeeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employee not found - " + id));
+                .orElseThrow(() -> new ObjectNotFoundException("Zamestnanec", id));
     }
+
     @Transactional
     @Override
     public Employee save(Employee employee) {
+        // Ak ide o nový záznam
+        if (employee.getId() == null) {
+            if (employeeRepository.existsByEmail(employee.getEmail())) {
+                throw new EmailAlreadyExistsException(employee.getEmail());
+            }
+        }
+        // Ak ide o aktualizáciu existujúceho záznamu
+        else {
+            Employee existingWithEmail = employeeRepository.findByEmail(employee.getEmail()).orElse(null);
+            if (existingWithEmail != null && !existingWithEmail.getId().equals(employee.getId())) {
+                throw new EmailAlreadyExistsException(employee.getEmail());
+            }
+        }
+
         return employeeRepository.save(employee);
     }
+
     @Transactional
     @Override
     public void deleteById(int id) {
+        if (!employeeRepository.existsById(id)) {
+            throw new ObjectNotFoundException("Zamestnanec", id);
+        }
         employeeRepository.deleteById(id);
     }
 }
