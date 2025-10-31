@@ -55,7 +55,7 @@ public class Employee {
 
     @NotNull(message = "Typ zamestnania (full_time) je povinný")
     @Column(name = "full_time", nullable = false)
-    private Boolean fullTime;
+    private String fullTime;
 
     public Employee() { }
 
@@ -87,8 +87,8 @@ public class Employee {
     public Double getSalary() { return salary; }
     public void setSalary(Double salary) { this.salary = salary; }
 
-    public Boolean getFullTime() { return fullTime; }
-    public void setFullTime(Boolean fullTime) { this.fullTime = fullTime; }
+    public String getFullTime() { return fullTime; }
+    public void setFullTime(String fullTime) { this.fullTime = fullTime; }
 
 
 }
