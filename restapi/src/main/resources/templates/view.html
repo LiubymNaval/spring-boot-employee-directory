@@ -9,10 +9,28 @@
     <title>Employee Detail</title>
     <style>
         body {
-            padding-top: 20px;
+            background-color: #f8f9fa;
+            padding-top: 40px;
         }
-        .header {
-            margin-bottom: 20px;
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .info-row {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-label {
+            font-weight: 600;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
         }
     </style>
 </head>
@@ -21,36 +39,67 @@
 
 <div class="container">
 
-    <div class="header">
-        <h2>Employee - Detail zamestnanca</h2>
-    </div>
+    <div class="card p-4">
+        <div class="card-header bg-white border-0 mb-3">
+            <h3><i class="fas fa-user-circle me-2"></i> Detail zamestnanca</h3>
+        </div>
 
-    <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Informácie o zamestnancovi</h5>
-            <p class="card-text"><strong>Meno:</strong> <span th:text="${employee.firstName}"></span></p>
-            <p class="card-text"><strong>Priezvisko:</strong> <span th:text="${employee.lastName}"></span></p>
-            <p class="card-text"><strong>Email:</strong> <span th:text="${employee.email}"></span></p>
-            <p class="card-text"><strong>Pozícia:</strong> <span th:text="${employee.jobTitle}"></span></p>
-            <p class="card-text"><strong>Plat:</strong> <span th:text="${employee.salary}"></span>€</p>
-        </div>
-        <div class="card-footer">
-            <a th:href="@{/employees}" class="btn btn-secondary">Späť na zoznam</a>
 
-            <form th:action="@{'/employees/' + ${employee.id} + '/edit'}" method="get" class="d-inline">
-                <button type="submit" class="btn btn-warning" title="Update">
-                    <i class="fas fa-edit"></i> Upraviť
-                </button>
-            </form>
+            <div class="row info-row">
+                <div class="col-sm-4 info-label"><i class="fas fa-id-card"></i> Meno</div>
+                <div class="col-sm-8" th:text="${employee.firstName}"></div>
+            </div>
 
-            <form th:action="@{'/employees/' + ${employee.id}}" method="post" class="d-inline">
-                <input type="hidden" name="_method" value="delete"/>
-                <button type="submit" class="btn btn-danger" title="Delete"
-                        onclick="return confirm('Ste si istý, že chcete odstrániť tohto zamestnanca?');">
-                    <i class="fas fa-trash"></i> Vymazať
-                </button>
-            </form>
+            <div class="row info-row">
+                <div class="col-sm-4 info-label"><i class="fas fa-id-card"></i> Priezvisko</div>
+                <div class="col-sm-8" th:text="${employee.lastName}"></div>
+            </div>
+
+            <div class="row info-row">
+                <div class="col-sm-4 info-label"><i class="fas fa-envelope"></i> Email</div>
+                <div class="col-sm-8" th:text="${employee.email}"></div>
+            </div>
+
+            <div class="row info-row">
+                <div class="col-sm-4 info-label"><i class="fas fa-briefcase"></i> Pozícia</div>
+                <div class="col-sm-8" th:text="${employee.jobTitle}"></div>
+            </div>
+
+            <div class="row info-row">
+                <div class="col-sm-4 info-label"><i class="fas fa-money-bill-wave"></i> Plat</div>
+                <div class="col-sm-8">
+                    <span th:text="${employee.salary}"></span> €
+                </div>
+            </div>
+
         </div>
+
+        <div class="card-footer d-flex justify-content-between">
+
+            <a th:href="@{/employees}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+
+            <div class="btn-group">
+
+                <form th:action="@{'/employees/' + ${employee.id} + '/edit'}" method="get" class="d-inline">
+                    <button type="submit" class="btn btn-outline-warning btn-sm" title="Update">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </form>
+
+                <form th:action="@{'/employees/' + ${employee.id} + '/delete'}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete"
+                            onclick="return confirm('Chcete naozaj vymazať tohto zamestnanca?');">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+
     </div>
 
 </div>
