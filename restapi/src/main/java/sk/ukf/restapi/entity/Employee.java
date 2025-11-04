@@ -1,6 +1,7 @@
 package sk.ukf.restapi.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -12,18 +13,19 @@ public class Employee {
     private Integer id;
 
     @NotBlank(message = "Meno nesmie byť prázdne")
-    @Size(max = 50, message = "Meno nesmie byť dlhšie ako 50 znakov")
+    @Size(min = 2, max = 50, message = "Meno musí mať aspoň 2 znaky a nesmie byť dlhšie ako 50 znakov")
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @NotBlank(message = "Priezvisko nesmie byť prázdne")
-    @Size(max = 50, message = "Priezvisko nesmie byť dlhšie ako 50 znakov")
+    @Size(min = 2, max = 50, message = "Priezvisko musí mať aspoň 2 znaky a nesmie byť dlhšie ako 50 znakov")
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
     @NotNull(message = "Dátum narodenia je povinný")
     @Past(message = "Dátum narodenia musí byť v minulosti")
     @Column(name = "birth_date", nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 
     @NotBlank(message = "Email nesmie byť prázdny")
@@ -53,7 +55,7 @@ public class Employee {
     @Column(name = "salary", nullable = false)
     private Double salary;
 
-    @NotNull(message = "Typ zamestnania (full_time) je povinný")
+    @NotNull(message = "Typ zamestnania je povinný")
     @Column(name = "full_time", nullable = false)
     private String fullTime;
 

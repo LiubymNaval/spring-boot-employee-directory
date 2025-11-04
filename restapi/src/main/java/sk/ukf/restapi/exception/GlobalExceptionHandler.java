@@ -1,47 +1,48 @@
 package sk.ukf.restapi.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-import sk.ukf.restapi.dto.ApiResponse;
+import org.springframework.ui.Model;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Objekt nenájdený - genericky pre všetky entity
+    // Objekt nenájdený (404)
     @ExceptionHandler(ObjectNotFoundException.class)
-    public ResponseEntity<ApiResponse<String>> handleObjectNotFound(ObjectNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.error(ex.getMessage()));
+    public String handleObjectNotFound(ObjectNotFoundException ex, Model model) {
+        model.addAttribute("error", ex.getMessage());
+        return "not-found";
     }
 
-    // Email už existuje
+    // Email už existuje (409)
     @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<ApiResponse<String>> handleEmailExists(EmailAlreadyExistsException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(ApiResponse.error(ex.getMessage()));
+    public String handleEmailExists(EmailAlreadyExistsException ex, Model model) {
+        model.addAttribute("error", ex.getMessage());
+        return "email-exists";
     }
-    // Validačné chyby
+
+    // Validačné chyby (400)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<List<String>>> handleValidation(MethodArgumentNotValidException ex) {
-        List<String> errors = new ArrayList<>();
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-                errors.add(error.getDefaultMessage())
-        );
+    public String handleValidation(MethodArgumentNotValidException ex, Model model) {
 
-        ApiResponse<List<String>> response = new ApiResponse<>(errors, "Validačné chyby");
-        return ResponseEntity.badRequest().body(response);
+        List<String> errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(err -> err.getDefaultMessage())
+                .toList();
+
+        model.addAttribute("errors", errors);
+
+        return "validation";
     }
 
-    // Ostatné chyby
+    // Ostatné chyby (500)
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<String>> handleGeneral(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("Nastala chyba: " + ex.getMessage()));
+    public String handleGeneral(Exception ex, Model model) {
+        model.addAttribute("error", ex.getMessage());
+        return "server-error";
     }
 }

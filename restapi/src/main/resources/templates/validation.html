@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Validačné chyby</title>
+</head>
+<body>
+<h2>Chyby vo formulári:</h2>
+
+<ul>
+    <li th:each="err : ${errors}" th:text="${err}"></li>
+</ul>
+
+<a th:href="@{/employees}">Späť</a>
+</body>
+</html>
